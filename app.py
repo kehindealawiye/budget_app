@@ -78,7 +78,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Manually add title as a header with white text
-st.markdown('<h1 class="title-text">Assessing Y2024 Performance and Charting the Course for Y2025</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="title-text">Assessing Programme and Project Performance and Charting the Course for the Next Reporting Period</h1>', unsafe_allow_html=True)
 
 # Pillar input
 pillar = st.selectbox("Select Pillar", [
