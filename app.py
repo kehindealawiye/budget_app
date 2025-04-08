@@ -106,7 +106,11 @@ if st.button("Generate Analysis") and total_projects > 0:
             "Enable productive infrastructure to boost competitiveness.",
             "Align job creation efforts with local economic strengths."
         ]
-
+    
+    # Precompute join strings to avoid using backslashes in f-string expressions.
+    implications_text = "\n    ".join(implications)
+    outlook_text = "\n    ".join(outlook_recommendations)
+    
     expert_text = f"""
     ### Expert Analysis
 
@@ -121,10 +125,10 @@ if st.button("Generate Analysis") and total_projects > 0:
     - Red: {red}  
 
     **Implications:**  
-    {'  \n    '.join(implications)}
+    {implications_text}
 
     **2025 Outlook & Recommendations:**  
-    {'  \n    '.join(outlook_recommendations)}
+    {outlook_text}
     """
 
     st.markdown(expert_text)
