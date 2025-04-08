@@ -50,6 +50,7 @@ st.markdown("""
         .stSelectbox select {
             color: blue !important;
             background-color: white !important;
+            border: 1px solid #ccc; /* Optional: you can add a border to enhance appearance */
         }
 
         .title-text {
