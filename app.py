@@ -27,6 +27,9 @@ st.markdown("""
         h1, h2, h3, h4, h5, h6 {
             color: white;
         }
+        .streamlit-expanderHeader {
+            color: white;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -133,7 +136,7 @@ if st.button("Generate Analysis") and total_projects > 0:
 
     st.markdown(expert_text)
 
-    # Save as PNG
+    # Save as PNG (Summary with all text white)
     slide = Image.new("RGB", (1000, 800), color="#0b1e3f")
     draw = ImageDraw.Draw(slide)
     font = ImageFont.load_default()
@@ -147,7 +150,7 @@ if st.button("Generate Analysis") and total_projects > 0:
     with open(png_filename, "rb") as f:
         st.download_button("Download Slide Summary (PNG)", f, file_name=os.path.basename(png_filename), mime="image/png")
 
-    # Save as PPTX
+    # Save as PPTX (Make sure text is white)
     prs = Presentation()
     slide_layout = prs.slide_layouts[5]
     ppt_slide = prs.slides.add_slide(slide_layout)
@@ -157,7 +160,7 @@ if st.button("Generate Analysis") and total_projects > 0:
     p = title_frame.paragraphs[0]
     p.font.size = Pt(28)
     p.font.bold = True
-    p.font.color.rgb = RGBColor(11, 30, 63)
+    p.font.color.rgb = RGBColor(255, 255, 255)  # Ensure title text is white
 
     content = f"Projects Tracked: {total_projects}\nCompleted: {completed}\nNot Completed: {not_completed}\n\nGreen: {green}\nAmber: {amber}\nRed: {red}\n\nImplications:\n- " + "\n- ".join(implications) + "\n\n2025 Outlook:\n- " + "\n- ".join(outlook_recommendations)
 
@@ -166,6 +169,7 @@ if st.button("Generate Analysis") and total_projects > 0:
     tf.text = content
     for para in tf.paragraphs:
         para.font.size = Pt(16)
+        para.font.color.rgb = RGBColor(255, 255, 255)  # Ensure content text is white
 
     pptx_filename = f"output_slides/{pillar.replace(' ', '_')}_summary.pptx"
     prs.save(pptx_filename)
