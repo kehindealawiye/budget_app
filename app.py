@@ -53,7 +53,7 @@ st.markdown("""
 
         .title-text {
             color: white !important;
-            font-size: 100px;  /* Larger font size */
+            font-size: 36px;  /* Size of headers */
             font-weight: bold;
             text-align: center;
         }
@@ -61,7 +61,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Manually add title as a header with white text
-st.markdown('<p class="title-text">Assessing Y2024 Performance and Charting the Course for Y2025</p>', unsafe_allow_html=True)
+st.markdown('<h1 class="title-text">Assessing Y2024 Performance and Charting the Course for Y2025</h1>', unsafe_allow_html=True)
 
 # Pillar input
 pillar = st.selectbox("Select Pillar", [
