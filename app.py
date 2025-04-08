@@ -30,6 +30,12 @@ st.markdown("""
         .streamlit-expanderHeader {
             color: white;
         }
+        .stMarkdown, .stText {
+            color: white !important;
+        }
+        .css-1v3fvcr, .css-1m3r7u2 {
+            color: white !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
