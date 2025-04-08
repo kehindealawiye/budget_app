@@ -36,6 +36,15 @@ st.markdown("""
         .css-1v3fvcr, .css-1m3r7u2 {
             color: white !important;
         }
+
+        /* Apply white text to all widgets' labels and inputs */
+        .stSelectbox label, .stNumberInput label, .stTextInput label, .stRadio label, .stCheckbox label {
+            color: white !important;
+        }
+
+        .stSelectbox div, .stNumberInput div, .stTextInput div, .stRadio div, .stCheckbox div {
+            color: white !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
