@@ -45,6 +45,12 @@ st.markdown("""
         .stSelectbox div, .stNumberInput div, .stTextInput div, .stRadio div, .stCheckbox div {
             color: white !important;
         }
+
+        /* Ensure st.title is white */
+        .stTitle {
+            color: white !important;
+        }
+
     </style>
 """, unsafe_allow_html=True)
 
