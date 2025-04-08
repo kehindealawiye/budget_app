@@ -46,9 +46,10 @@ st.markdown("""
             color: white !important;
         }
 
-        /* Ensure st.title is white */
-        .stTitle {
-            color: white !important;
+        /* Style the selectbox to have blue text and white background */
+        .stSelectbox select {
+            color: blue !important;
+            background-color: white !important;
         }
 
         .title-text {
@@ -56,6 +57,17 @@ st.markdown("""
             font-size: 36px;  /* Size of headers */
             font-weight: bold;
             text-align: center;
+        }
+
+        /* Fix the chart background to be white and labels to be black */
+        .stPlotlyChart, .stMatplotlib {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .stMatplotlib .matplotlib, .stMatplotlib .matplotlib-figure {
+            background-color: white;
+            color: black;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -89,8 +101,13 @@ if st.button("Generate Analysis") and total_projects > 0:
     # Chart
     fig, ax = plt.subplots()
     ax.pie([green, amber, red], labels=["Green", "Amber", "Red"], autopct='%1.1f%%', colors=['#2ecc71', '#f1c40f', '#e74c3c'])
-    ax.set_title("Project Performance Breakdown", color='white')
-    fig.patch.set_facecolor('#0b1e3f')
+    ax.set_title("Project Performance Breakdown", color='black', fontsize=16)
+    ax.set_facecolor('white')
+    
+    # Set the labels to be black
+    for label in ax.labels:
+        label.set_color('black')
+
     st.pyplot(fig)
 
     implications = []
