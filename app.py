@@ -1,170 +1,97 @@
 import streamlit as st
-import matplotlib.pyplot as plt
-import os
-from PIL import Image, ImageDraw, ImageFont
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_SHAPE
+import os
 from datetime import datetime
 
-# Create output folder if it doesn't exist
-if not os.path.exists("output_slides"):
-    os.makedirs("output_slides")
+# Set up page configuration
+st.set_page_config(page_title="Budget Performance Review", layout="wide")
 
-st.set_page_config(page_title="Budget Pillars Performance Review", layout="centered")
+# Title of the app
+st.title("🧾 Y2024 Performance Review and Y2025 Outlook")
 
-# Page styling
-st.markdown("""
-    <style>
-        body {
-            background-color: #0b1e3f;
-            color: white;
-        }
-        .stApp {
-            background-color: #0b1e3f;
-        }
-        h1, h2, h3, h4, h5, h6 {
-            color: white;
-        }
-    </style>
-""", unsafe_allow_html=True)
+# Select pillar (objective)
+pillar = st.selectbox("Select Pillar", ["Effective Governance", "Human Centric City", "Modern Infrastructure", "Thriving Economy"])
 
-st.title("Assessing Y2024 Performance and Charting the Course for Y2025")
+# Input section for project breakdown
+total_projects = st.number_input("Total Projects Tracked", min_value=0)
+not_started = st.number_input("Projects Not Yet Started", min_value=0)
+in_progress = st.number_input("Projects In Progress", min_value=0)
+completed = st.number_input("Projects Completed", min_value=0)
 
-# Pillar input
-pillar = st.selectbox("Select Pillar", [
-    "Effective Governance",
-    "Human Centric City",
-    "Modern Infrastructure",
-    "Thriving Economy"
-])
+# Input for project status breakdown (by percentage)
+green_projects = st.number_input("Projects (80-100% Complete)", min_value=0)
+amber_projects = st.number_input("Projects (60-79% Complete)", min_value=0)
+red_projects = st.number_input("Projects (0-59% Complete)", min_value=0)
 
-st.markdown("### Project Status Input")
-total_projects = st.number_input("Total number of projects tracked", min_value=0)
-not_commenced = st.number_input("Projects yet to commence", min_value=0, max_value=total_projects)
-initiation = st.number_input("Projects at initiation", min_value=0, max_value=total_projects)
-in_progress = st.number_input("Projects in progress", min_value=0, max_value=total_projects)
-completed = st.number_input("Projects completed", min_value=0, max_value=total_projects)
-
+# Calculate not completed projects
 not_completed = total_projects - completed
 
-st.markdown("### Progress Ratings")
-green = st.number_input("Projects between 80% - 100% (Green)", min_value=0, max_value=total_projects)
-amber = st.number_input("Projects between 60% - 79% (Amber)", min_value=0, max_value=total_projects)
-red = st.number_input("Projects between 0% - 59% (Red)", min_value=0, max_value=total_projects)
+# Show results when button is clicked
+if st.button("Generate Summary"):
+    # Display summary information
+    st.subheader(f"Performance Summary for {pillar}")
+    st.write(f"- Total Projects: {total_projects}")
+    st.write(f"- Not Started: {not_started}")
+    st.write(f"- In Progress: {in_progress}")
+    st.write(f"- Completed: {completed}")
+    st.write(f"- Not Completed: {not_completed}")
+    st.write(f"- Projects with Green Status (80-100%): {green_projects}")
+    st.write(f"- Projects with Amber Status (60-79%): {amber_projects}")
+    st.write(f"- Projects with Red Status (0-59%): {red_projects}")
 
-if st.button("Generate Analysis") and total_projects > 0:
-    # Chart
-    fig, ax = plt.subplots()
-    ax.pie([green, amber, red], labels=["Green", "Amber", "Red"], autopct='%1.1f%%', colors=['#2ecc71', '#f1c40f', '#e74c3c'])
-    ax.set_title("Project Performance Breakdown", color='white')
-    fig.patch.set_facecolor('#0b1e3f')
-    st.pyplot(fig)
+    # Expert Analysis based on the project status breakdown
+    if green_projects >= amber_projects and green_projects >= red_projects:
+        st.write("🔍 Expert Analysis: The majority of the projects are progressing well, with green status indicating timely completion. However, attention should still be given to the red and amber projects to ensure any delays are managed effectively.")
+    elif amber_projects >= green_projects and amber_projects >= red_projects:
+        st.write("🔍 Expert Analysis: A significant portion of the projects are in the amber status, meaning there are slight delays. Focus on streamlining processes to avoid further delays and get these projects back on track.")
+    else:
+        st.write("🔍 Expert Analysis: The red status indicates serious delays across multiple projects. Immediate intervention is required to understand the bottlenecks and correct course to avoid jeopardizing the objective for 2025.")
 
-    implications = []
-    outlook_recommendations = []
+    # 2025 Outlook (General suggestions)
+    st.subheader("2025 Outlook and Suggestions")
+    if total_projects > 0:
+        st.write("📅 The projects that are delayed need immediate attention to get back on schedule. Prioritizing green status projects for timely completion is key to achieving the pillar's goals.")
+        st.write("💡 Consider allocating more resources to the red and amber projects for faster progress and ensure all projects meet their deadlines for a successful 2025.")
 
-    # Improved implication logic
-    green_ratio = green / total_projects
-    amber_ratio = amber / total_projects
-    red_ratio = red / total_projects
+# Save results as an image or ppt
+def save_slide_and_image():
+    prs = Presentation()
+    slide = prs.slides.add_slide(prs.slide_layouts[5])
 
-    if green_ratio >= 0.5:
-        implications.append("A significant portion of projects made good progress with minimal delays, indicating effective execution in key areas.")
-    elif green_ratio < 0.3:
-        implications.append("Few projects reached full or near completion, suggesting a need for stronger project management and delivery push.")
+    # Add Title
+    title = slide.shapes.title
+    title.text = f"Performance Summary for {pillar}"
 
-    if amber_ratio > 0.3:
-        implications.append("Many projects experienced slight delays, which may impact timely achievement of the pillar if not addressed.")
-
-    if red_ratio >= 0.2:
-        implications.append("A concerning number of projects are severely delayed and require urgent intervention to recover delivery timelines.")
-
-    # Recommendations based on pillars
-    if pillar == "Effective Governance":
-        outlook_recommendations = [
-            "Fast-track digitization and e-governance tools to support efficiency.",
-            "Deploy performance dashboards for continuous MDA tracking.",
-            "Institutionalize citizen feedback mechanisms."
-        ]
-    elif pillar == "Human Centric City":
-        outlook_recommendations = [
-            "Scale programmes with direct impact on health, education, and social welfare.",
-            "Enhance inter-agency collaboration for holistic human development.",
-            "Focus on inclusive delivery for vulnerable populations."
-        ]
-    elif pillar == "Modern Infrastructure":
-        outlook_recommendations = [
-            "Accelerate delivery timelines for mobility and housing projects.",
-            "Improve contractor supervision frameworks.",
-            "Enforce regular progress audits for major infrastructure."
-        ]
-    elif pillar == "Thriving Economy":
-        outlook_recommendations = [
-            "Strengthen SME support schemes and innovation hubs.",
-            "Enable productive infrastructure to boost competitiveness.",
-            "Align job creation efforts with local economic strengths."
-        ]
-
-    expert_text = f"""
-    ### Expert Analysis
-
-    **Pillar:** {pillar}  
-    **Total Projects Tracked:** {total_projects}  
-    - Completed: {completed} ({(completed/total_projects)*100:.1f}%)  
-    - Not Completed: {not_completed} ({(not_completed/total_projects)*100:.1f}%)  
-
-    **Performance Breakdown:**  
-    - Green: {green}  
-    - Amber: {amber}  
-    - Red: {red}  
-
-    **Implications:**  
-    {'  \n    '.join(implications)}
-
-    **2025 Outlook & Recommendations:**  
-    {'  \n    '.join(outlook_recommendations)}
+    # Add Text
+    txBox = slide.shapes.add_textbox(MSO_SHAPE.RECTANGLE, Inches(0.5), Inches(1.5), Inches(9), Inches(5.5))
+    tf = txBox.text_frame
+    tf.text = f"""
+    Total Projects: {total_projects}
+    Not Started: {not_started}
+    In Progress: {in_progress}
+    Completed: {completed}
+    Not Completed: {not_completed}
+    Green Projects (80-100%): {green_projects}
+    Amber Projects (60-79%): {amber_projects}
+    Red Projects (0-59%): {red_projects}
     """
 
-    st.markdown(expert_text)
+    # Save as ppt
+    output_ppt = os.path.join("output_slides", f"Performance_Summary_{pillar}.pptx")
+    prs.save(output_ppt)
 
-    # Save as PNG
-    slide = Image.new("RGB", (1000, 800), color="#0b1e3f")
-    draw = ImageDraw.Draw(slide)
-    font = ImageFont.load_default()
+    # Optionally save as PNG (rendering the slide as image)
+    slide_image_path = os.path.join("output_slides", f"Performance_Summary_{pillar}.png")
+    slide.shapes[0].element.getparent().getparent().getparent().save(slide_image_path)
 
-    slide_text = f"{pillar}\n\nProjects: {total_projects}\nCompleted: {completed}\nNot Completed: {not_completed}\n\nGreen: {green}\nAmber: {amber}\nRed: {red}\n\nImplications:\n- " + "\n- ".join(implications) + "\n\n2025 Outlook:\n- " + "\n- ".join(outlook_recommendations)
-    draw.text((30, 30), slide_text, fill="white", font=font)
+    return output_ppt, slide_image_path
 
-    png_filename = f"output_slides/{pillar.replace(' ', '_')}_summary.png"
-    slide.save(png_filename)
-    st.success("PNG slide summary saved!")
-    with open(png_filename, "rb") as f:
-        st.download_button("Download Slide Summary (PNG)", f, file_name=os.path.basename(png_filename), mime="image/png")
+# Button to save results as ppt and image
+if st.button("Save as PPT and Image"):
+    ppt_file, image_file = save_slide_and_image()
+    st.write(f"✅ Summary saved as PPT: {ppt_file}")
+    st.write(f"✅ Summary saved as Image: {image_file}")
 
-    # Save as PPTX
-    prs = Presentation()
-    slide_layout = prs.slide_layouts[5]
-    ppt_slide = prs.slides.add_slide(slide_layout)
-    title_box = ppt_slide.shapes.add_textbox(Inches(0.5), Inches(0.5), Inches(9), Inches(1))
-    title_frame = title_box.text_frame
-    title_frame.text = f"{pillar} – Performance Summary"
-    p = title_frame.paragraphs[0]
-    p.font.size = Pt(28)
-    p.font.bold = True
-    p.font.color.rgb = RGBColor(11, 30, 63)
-
-    content = f"Projects Tracked: {total_projects}\nCompleted: {completed}\nNot Completed: {not_completed}\n\nGreen: {green}\nAmber: {amber}\nRed: {red}\n\nImplications:\n- " + "\n- ".join(implications) + "\n\n2025 Outlook:\n- " + "\n- ".join(outlook_recommendations)
-
-    content_box = ppt_slide.shapes.add_textbox(Inches(0.5), Inches(1.5), Inches(9), Inches(5.5))
-    tf = content_box.text_frame
-    tf.text = content
-    for para in tf.paragraphs:
-        para.font.size = Pt(16)
-
-    pptx_filename = f"output_slides/{pillar.replace(' ', '_')}_summary.pptx"
-    prs.save(pptx_filename)
-    st.success("PPTX slide summary saved!")
-    with open(pptx_filename, "rb") as f:
-        st.download_button("Download Slide Summary (PPTX)", f, file_name=os.path.basename(pptx_filename), mime="application/vnd.openxmlformats-officedocument.presentationml.presentation")
