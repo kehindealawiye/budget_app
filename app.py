@@ -5,7 +5,6 @@ from PIL import Image, ImageDraw, ImageFont
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
-from pptx.enum.shapes import MSO_SHAPE
 from datetime import datetime
 
 # Create output folder if it doesn't exist
@@ -51,6 +50,11 @@ st.markdown("""
             color: blue !important;
             background-color: white !important;
             border: 1px solid #ccc; /* Optional: you can add a border to enhance appearance */
+        }
+
+        /* Fix the selected value text color to black */
+        .stSelectbox div > div > div > div {
+            color: black !important;
         }
 
         .title-text {
@@ -101,13 +105,16 @@ red = st.number_input("Projects between 0% - 59% (Red)", min_value=0, max_value=
 if st.button("Generate Analysis") and total_projects > 0:
     # Chart
     fig, ax = plt.subplots()
-    ax.pie([green, amber, red], labels=["Green", "Amber", "Red"], autopct='%1.1f%%', colors=['#2ecc71', '#f1c40f', '#e74c3c'])
+    wedges, texts, autotexts = ax.pie([green, amber, red], labels=["Green", "Amber", "Red"], autopct='%1.1f%%', colors=['#2ecc71', '#f1c40f', '#e74c3c'])
     ax.set_title("Project Performance Breakdown", color='black', fontsize=16)
     ax.set_facecolor('white')
-    
+
     # Set the labels to be black
-    for label in ax.labels:
-        label.set_color('black')
+    for text in texts:
+        text.set_color('black')
+
+    for autotext in autotexts:
+        autotext.set_color('black')
 
     st.pyplot(fig)
 
