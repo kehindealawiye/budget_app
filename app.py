@@ -53,7 +53,7 @@ st.markdown("""
 
         .title-text {
             color: white !important;
-            font-size: 36px;
+            font-size: 48px;  /* Larger font size */
             font-weight: bold;
             text-align: center;
         }
